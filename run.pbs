@@ -1,0 +1,38 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=24:dc2,walltime=2:00:00
+#PBS -N app-bids-hpcpipelines
+#PBS -V
+
+if [ -z $SERVICE_DIR ]; then export SERVICE_DIR=`pwd`; fi
+
+[ $PBS_O_WORKDIR ] && cd $PBS_O_WORKDIR
+
+if [ $ENV == "IUHPC" ]; then
+	module load singularity
+	container=/N/soft/cle5/singularity/images/bids_hcppipelines-2016-11-02-84fb7649fc5e.img
+	cpus=24
+fi
+
+if [ $ENV == "VM" ]; then
+	module load singularity
+	container=/usr/local/bids_hcppipelines-2016-11-02-84fb7649fc5e.img
+	cpus=8
+fi
+
+T1=`$SERVICE_DIR/jq -r '.t1' config.json`
+T2=`$SERVICE_DIR/jq -r '.t2' config.json`
+echo "using $SERVICE_DIR $T1 $T2"
+
+#organizing data to bids structure
+rm -rf input
+mkdir -p input/sub-0/anat
+cp $T1 input/sub-0/anat/sub-0_T1w.nii.gz
+cp $T2 input/sub-0/anat/sub-0_T2w.nii.gz
+
+mkdir -p output
+
+echo "running pipeline"
+singularity exec $container python /run.py \
+	--n_cpus $cpus \
+	--license_key $FREESURFER_LICENSE_KEY \
+	input output participant
