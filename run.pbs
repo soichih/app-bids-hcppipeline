@@ -35,12 +35,12 @@ echo "running pipeline"
 singularity exec $container python /run.py \
 	--n_cpus $cpus \
 	--license_key $FREESURFER_LICENSE_KEY \
-	input output participant
-ret=$?
-if [ $ret -eq 0]; then
+	input ./ participant
+if [ -d sub-0 ]; then
+	mv sub-0 output
 	echo 0 > finished
 else
-	echo $ret > finished
+	echo 1 > finished
 	exit $ret
 fi
 

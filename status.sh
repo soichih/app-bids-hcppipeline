@@ -31,13 +31,14 @@ if [ -f jobid ]; then
         exit 2
     fi
     if [ $jobstate == "Q" ]; then
-        echo "Waiting in the queue"
         eststart=`showstart $jobid | grep start`
+        echo "$jobid Waiting in the queue - $eststart"
         #curl -X POST -H "Content-Type: application/json" -d "{\"msg\":\"Waiting in the PBS queue : $eststart\"}" $SCA_PROGRESS_URL
         exit 0
     fi
     if [ $jobstate == "R" ]; then
-        echo "Running"
+	#tail -1 pipeline.log
+	echo "Running"
         exit 0
     fi
     if [ $jobstate == "H" ]; then
