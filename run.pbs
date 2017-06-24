@@ -1,6 +1,6 @@
 #!/bin/bash
-#PBS -l nodes=1:ppn=24:dc2,walltime=6:00:00
-#PBS -N app-bids-hpcpipelines
+#PBS -l nodes=1:ppn=24:dc2,walltime=12:00:00
+#PBS -N app-bids-hcppipelines
 #PBS -V
 
 if [ -z $SERVICE_DIR ]; then export SERVICE_DIR=`pwd`; fi
@@ -23,17 +23,22 @@ T1=`$SERVICE_DIR/jq -r '.t1' config.json`
 T2=`$SERVICE_DIR/jq -r '.t2' config.json`
 echo "using $SERVICE_DIR $T1 $T2"
 
+echo "dumping /N/dcwan"
+ls -la /N/dcwan
+
 #organizing data to bids structure
 rm -rf input
 mkdir -p input/sub-0/anat
-cp $T1 input/sub-0/anat/sub-0_T1w.nii.gz
-cp $T2 input/sub-0/anat/sub-0_T2w.nii.gz
+ln -s $T1 input/sub-0/anat/sub-0_T1w.nii.gz
+ln -s $T2 input/sub-0/anat/sub-0_T2w.nii.gz
 
 echo "running pipeline"
 singularity exec $container python /run.py \
 	--n_cpus $cpus \
 	--license_key $FREESURFER_LICENSE_KEY \
 	input ./ participant
+
+#check for final output file
 if [ -d sub-0 ]; then
 	mv sub-0 output
 	echo 0 > finished

@@ -37,7 +37,7 @@ if [ -f jobid ]; then
         exit 0
     fi
     if [ $jobstate == "R" ]; then
-	#tail -1 pipeline.log
+	#tail -1 stdout.log
 	echo "Running"
         exit 0
     fi

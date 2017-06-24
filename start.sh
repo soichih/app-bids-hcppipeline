@@ -5,6 +5,7 @@ if [ -z $ENV ]; then export ENV=IUHPC; fi
 
 #clean up previous job (just in case)
 rm -f finished
+rm -rf sub-01
 
 if [ $ENV == "IUHPC" ]; then
     jobid=`qsub $SERVICE_DIR/run.pbs`
@@ -12,7 +13,7 @@ if [ $ENV == "IUHPC" ]; then
 fi
 
 if [ $ENV == "VM" ]; then
-    nohup time $SERVICE_DIR/run.pbs > stdout.log 2> stderr.log &
+    nohup time $SERVICE_DIR/run.pbs &
     echo $! > pid
 fi
 
