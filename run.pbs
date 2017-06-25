@@ -29,8 +29,8 @@ ls -la /N/dcwan
 #organizing data to bids structure
 rm -rf input
 mkdir -p input/sub-0/anat
-ln -s $T1 input/sub-0/anat/sub-0_T1w.nii.gz
-ln -s $T2 input/sub-0/anat/sub-0_T2w.nii.gz
+ln -s $SERVICE_DIR/$T1 input/sub-0/anat/sub-0_T1w.nii.gz
+ln -s $SERVICE_DIR/$T2 input/sub-0/anat/sub-0_T2w.nii.gz
 
 echo "running pipeline"
 singularity exec $container python /run.py \
