@@ -10,11 +10,12 @@ T2=`jq -r '.t2' config.json`
 
 #organizing brainlife input to bids structure
 mkdir -p input/sub-0/anat
-ln -s `pwd`/$T1 input/sub-0/anat/sub-0_T1w.nii.gz
-ln -s `pwd`/$T2 input/sub-0/anat/sub-0_T2w.nii.gz
+ln -s $T1 input/sub-0/anat/sub-0_T1w.nii.gz
+ln -s $T2 input/sub-0/anat/sub-0_T2w.nii.gz
 
-singularity exec docker://brainlife/bids-hcppipelines:v3.17.0-14 \
-    python /run.py --n_cpus 8 --license_key $FREESURFER_LICENSE input ./ participant
+#singularity exec docker://brainlife/bids-hcppipelines:v3.17.0-14 \
+singularity exec docker://soichih/hcppipeline \
+    python /run.py --n_cpus 8 --license_key "$FREESURFER_LICENSE" input ./ participant
 
 #check for final output file
 if [ -d sub-0 ]; then
