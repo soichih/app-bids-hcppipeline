@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=8,walltime=24:00:00
+#PBS -N app-bids-hcppipelines
+
+#clean up previous job (just in case)
+rm -rf sub-01 output input
+
+T1=`jq -r '.t1' config.json`
+T2=`jq -r '.t2' config.json`
+
+#organizing brainlife input to bids structure
+mkdir -p input/sub-0/anat
+ln -s `pwd`/$T1 input/sub-0/anat/sub-0_T1w.nii.gz
+ln -s `pwd`/$T2 input/sub-0/anat/sub-0_T2w.nii.gz
+
+singularity exec docker://brainlife/bids-hcppipelines:v3.17.0-14 \
+    python /run.py --n_cpus 8 --license_key $FREESURFER_LICENSE input ./ participant
+
+#check for final output file
+if [ -d sub-0 ]; then
+	mv sub-0 output
+    exit 0   
+else
+    exit 1
+fi
+
