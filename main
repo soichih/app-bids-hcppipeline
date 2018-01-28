@@ -10,8 +10,9 @@ T2=`jq -r '.t2' config.json`
 
 #organizing brainlife input to bids structure
 mkdir -p input/sub-0/anat
-ln -s $T1 input/sub-0/anat/sub-0_T1w.nii.gz
-ln -s $T2 input/sub-0/anat/sub-0_T2w.nii.gz
+#let's cp because ln is problematic when relative path is used
+cp $T1 input/sub-0/anat/sub-0_T1w.nii.gz
+cp $T2 input/sub-0/anat/sub-0_T2w.nii.gz
 
 module load singularity 2> /dev/null
 
